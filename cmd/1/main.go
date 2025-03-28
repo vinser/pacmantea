@@ -10,6 +10,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"gopkg.in/yaml.v3"
+
+	_ "embed"
 )
 
 type point struct {
@@ -710,21 +713,28 @@ func replaceWallsWithGraphics(maze []string) []string {
 	return newMaze
 }
 
+//go:embed levels.yml
+var LEVELS_DATA []byte
+
+type Level struct {
+	Name       string   `yaml:"name"`
+	Difficulty string   `yaml:"difficulty"`
+	Maze       []string `yaml:"maze"`
+}
+
+type Levels struct {
+	Levels []Level `yaml:"levels"`
+}
+
 func main() {
-	// New example maze
-	maze := []string{
-		"###################",
-		"#o.......#.......o#",
-		"#.###.#..#..#.###.#",
-		"#B.......#.......I#",
-		"#.###.#..#..#.###.#",
-		"  ....#..#..#....  ",
-		"#C######.P.######.#",
-		"#.....#..Y..#.....#",
-		"#.###.#..#..#.###.#",
-		"#o.......#.......o#",
-		"###################",
+	var levels Levels
+	err := yaml.Unmarshal(LEVELS_DATA, &levels)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
 	}
+
+	maze := levels.Levels[0].Maze
 
 	p := tea.NewProgram(initialModel(maze))
 	if err := p.Start(); err != nil {
