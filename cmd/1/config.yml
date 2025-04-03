@@ -1,0 +1,60 @@
+difficulties:
+  Easy:
+    ghost_speed:       1
+    rampant_duration:  5
+    cooldown_duration: 2
+    revival_timer:     5
+  Medium:
+    ghost_speed:       2
+    rampant_duration:  3
+    cooldown_duration: 2
+    revival_timer:     3
+  Hard:
+    ghost_speed:       3
+    rampant_duration:  2
+    cooldown_duration: 2
+    revival_timer:     2
+
+levels:
+  - name: Level 1
+    difficulty: Easy
+    maze:
+      - "###################"
+      - "#o       #       o#"
+      - "# ### #  #  # ### #"
+      - "# ..     #     .. #"
+      - "# ### #  #  # ### #"
+      - " o    #  #  #    o "
+      - "# ######   ###### #"
+      - "# ..  #     #  .. #"
+      - "# ### #  #  # ### #"
+      - "#o       #       o#"
+      - "###################"
+  - name: Level 2
+    difficulty: Easy
+    maze:
+      - "###################"
+      - "#o       #       o#"
+      - "# ### #  #  # ### #"
+      - "#.       #       .#"
+      - "# ### #  #  # ### #"
+      - "      #  #  #      "
+      - "#.###### . ######.#"
+      - "#     #     #     #"
+      - "# ### #  #  # ### #"
+      - "#o       #       o#"
+      - "###################"
+  - name: Level 3
+    difficulty: Easy
+    maze:
+      - "###################"
+      - "#o  ...  #  ...  o#"
+      - "# ### #  #  # ### #"
+      - "#        #        #"
+      - "# ### #  #  # ### #"
+      - "      #  #  #      "
+      - "# ###### . ###### #"
+      - "#     #  .  #     #"
+      - "# ### #  #  # ### #"
+      - "#o       #       o#"
+      - "###################"
