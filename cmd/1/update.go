@@ -2,6 +2,7 @@ package main
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/faiface/beep/speaker"
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -13,9 +14,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				switch msg.String() {
 				case " ":
 					lives := m.lives - 1
-					m.cancel()                                        // Deduct a life
-					newModel := initialModel(m.Config, m.currntLevel) // Restart current level
-					newModel.lives = lives                            // Preserve remaining lives
+					m.cancel()                                         // Deduct a life
+					newModel := initialModel(m.Config, m.currentLevel) // Restart current level
+					newModel.lives = lives                             // Preserve remaining lives
 					return newModel, newModel.Init()
 				case "q", "ctrl+c":
 					return m, tea.Quit
@@ -55,7 +56,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 	if m.win {
-		if m.currntLevel >= len(m.Levels)-1 {
+		if m.currentLevel >= len(m.Levels)-1 {
 			m.winGame = true
 			return m, nil
 		}
@@ -64,12 +65,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg.String() {
 			case " ":
 				if m.win {
-					if m.currntLevel < len(m.Levels)-1 {
-						m.currntLevel++
+					if m.currentLevel < len(m.Levels)-1 {
+						m.currentLevel++
 					}
 					lives := m.lives
 					m.cancel()
-					newModel := initialModel(m.Config, m.currntLevel)
+					newModel := initialModel(m.Config, m.currentLevel)
 					newModel.lives = lives
 					// Start the timer for ghost movement and blinking
 					return newModel, newModel.Init()
@@ -82,6 +83,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		speaker.Clear()
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
@@ -115,13 +117,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.score++
 				m.maze[m.player.position.y] = replaceAtIndex(m.maze[m.player.position.y], ' ', m.player.position.x) // Replace dot with a space
 				m.dots = append(m.dots[:i], m.dots[i+1:]...)
+				go m.playSound(SOUND_CHOMP)
+				break
 			}
 		}
 
 		// Check for win condition
 		if len(m.dots) == 0 {
 			m.win = true
-			// Remove the increment of currntLevel here
+			go m.playSound(SOUND_INTERMISSION)
 			return m, nil
 		}
 
@@ -134,6 +138,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				// Activate rampant mode
 				m.player.rampantState = true
+				go m.playSound(SOUND_EATFRUIT)
 				return m, m.startRampantTimer()
 			}
 		}
@@ -146,17 +151,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				continue
 			}
 			if m.player.rampantState {
-				g.position = m.escapeMove(g.position.x, g.position.y)
+				g.position = m.escapeMove(g.position)
 			} else {
 				switch g.name {
 				case "Blinky":
-					g.position = m.straitMove(g.position.x, g.position.y)
+					g.position = m.straitMove(g.position)
 				case "Inky":
-					g.position = m.chaosMove(g.position.x, g.position.y)
+					g.position = m.chaosMove(g.position)
 				case "Pinky":
-					g.position = m.predictMove(g.position.x, g.position.y)
+					g.position = m.predictMove(g.position)
 				case "Clyde":
-					g.position = m.cagyMove(g.position.x, g.position.y)
+					g.position = m.cagyMove(g.position)
 				}
 			}
 			m.ghosts[name] = g
@@ -166,7 +171,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case playerBlinkMsg:
 		// Toggle the blink state
-		m.player.blinkState = !m.player.blinkState
+		m.player.chewState = !m.player.chewState
 		// Schedule the next blink
 		return m, m.playerBlinkTick()
 

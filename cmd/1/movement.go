@@ -1,42 +1,55 @@
 package main
 
-func (m model) chaosMove(x, y int) point {
+func (m model) chaosMove(p point) point {
 	directions := randomDirections()
-	return m.ghostMove(x, y, directions)
+	return m.ghostMove(p, directions)
 }
 
-func (m model) straitMove(x, y int) point {
-	directions := sortDirectionsByDistance(point{x, y}, m.player.position)
-	return m.ghostMove(x, y, directions)
+func (m model) straitMove(p point) point {
+	destination := m.player.position
+	directions := sortDirectionsByDistance(p, destination)
+	return m.ghostMove(p, directions)
 }
 
-func (m model) predictMove(x, y int) point {
+func (m model) predictMove(p point) point {
 	destination := point{x: m.player.position.x + m.player.move.x, y: m.player.position.y + m.player.move.y}
-	directions := sortDirectionsByDistance(point{x, y}, destination)
-	return m.ghostMove(x, y, directions)
+	directions := sortDirectionsByDistance(p, destination)
+	return m.ghostMove(p, directions)
 }
 
-func (m model) cagyMove(x, y int) point {
+func (m model) cagyMove(p point) point {
 	destination := point{x: m.player.position.x - 2*m.player.move.x, y: m.player.position.y - 2*m.player.move.y}
-	directions := sortDirectionsByDistance(point{x, y}, destination)
-	return m.ghostMove(x, y, directions)
+	directions := sortDirectionsByDistance(p, destination)
+	return m.ghostMove(p, directions)
 }
 
-func (m model) escapeMove(x, y int) point {
-	destination := point{x: 2*x - m.player.position.x, y: 2*y - m.player.position.y}
-	directions := sortDirectionsByDistance(point{x, y}, destination)
-	return m.ghostMove(x, y, directions)
+func (m model) escapeMove(p point) point {
+	destination := point{x: 2*p.x - m.player.position.x, y: 2*p.y - m.player.position.y}
+	directions := sortDirectionsByDistance(p, destination)
+	return m.ghostMove(p, directions)
 }
 
-func (m model) ghostMove(x, y int, directions []point) point {
+func (m model) ghostMove(from point, directions []point) point {
 	for _, dir := range directions {
-		newX, newY := x+dir.x, y+dir.y
-		newX = m.tunnelMove(newX)
-		if m.canMove(newX, newY) {
-			return point{x: newX, y: newY}
+		to := point{x: from.x + dir.x, y: from.y + dir.y}
+		to.x = m.tunnelMove(to.x)
+		if m.isGhostHere(to) {
+			continue
+		}
+		if m.canMove(to.x, to.y) {
+			return to
 		}
 	}
-	return point{x: x, y: y}
+	return from
+}
+
+func (m model) isGhostHere(p point) bool {
+	for _, g := range m.ghosts {
+		if g.position.x == p.x && g.position.y == p.y {
+			return true
+		}
+	}
+	return false
 }
 
 func (m model) tunnelMove(newX int) int {
@@ -54,7 +67,7 @@ func (m model) tunnelMove(newX int) int {
 var wallChars = map[rune]bool{
 	'│': true, '─': true, '┌': true, '┐': true, '└': true, '┘': true, '├': true, '┤': true, '┬': true, '┴': true, '┼': true, // Inner wals
 	'║': true, '═': true, '╔': true, '╗': true, '╚': true, '╝': true, '╟': true, '╢': true, '╤': true, '╧': true, // Outer wals
-	'╖': true, '╓': true, '╜': true, '╙': true, //Tunnels corners
+	'╖': true, '╓': true, '╜': true, '╙': true, '╨': true, '╥': true, //Tunnels corners
 }
 
 // Check if movement is possible

@@ -13,7 +13,7 @@ const (
 	MazeCenter   proximity = false
 )
 
-// Sorted available free) positions based on their distance from the center of the maze in a specified proximity.
+// Sort available (free) positions based on their distance from the center of the maze in a specified proximity.
 func traverseOrder(maze []string, prox proximity) []point {
 	rows := len(maze)
 	cols := len(maze[0])
@@ -21,11 +21,11 @@ func traverseOrder(maze []string, prox proximity) []point {
 	// Calculate the center of the rectangle
 	centerPoint := point{x: int(float64(cols-1) / 2.0), y: int(float64(rows-1) / 2.0)}
 
-	// Создаем список всех клеток с их координатами и значениями
+	// Create a list of all cells with their coordinates and values
 	var points []point
 	for y, row := range maze {
 		for x, r := range row {
-			if r != '#' && r != 'o' && r != 'C' && r != 'B' && r != 'I' && r != 'P' && r != 'Y' { // Skip occupied poins in the maze
+			if r != '#' && r != 'o' && r != 'C' && r != 'B' && r != 'I' && r != 'P' && r != 'Y' { // Skip occupied points in the maze
 				points = append(points, point{x: x, y: y})
 			}
 		}

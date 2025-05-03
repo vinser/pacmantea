@@ -13,7 +13,7 @@ func (m model) View() string {
 		if m.winGame {
 			return "You Win! \nPress space to restart. Press 'q' to quit."
 		} else {
-			return fmt.Sprintf("Level %d completed! \nPress space to continue. Press 'q' to quit.", m.currntLevel+1)
+			return fmt.Sprintf("Level %d completed! \nPress space to continue. Press 'q' to quit.", m.currentLevel+1)
 		}
 	}
 	if m.gameOver {
@@ -28,7 +28,7 @@ func (m model) View() string {
 
 	// Place dots
 	for _, d := range m.dots {
-		grid[d.position.y] = replaceAtIndex(grid[d.position.y], '.', d.position.x)
+		grid[d.position.y] = replaceAtIndex(grid[d.position.y], '·', d.position.x)
 	}
 
 	// Place energizers
@@ -45,9 +45,9 @@ func (m model) View() string {
 		grid[g.position.y] = replaceAtIndex(grid[g.position.y], ghostChar, g.position.x)
 	}
 
-	// Place the player with blinking effect
+	// Place the player with chewing effect
 	playerChar := 'C'
-	if m.player.blinkState {
+	if m.player.chewState {
 		playerChar = 'c'
 	}
 	grid[m.player.position.y] = replaceAtIndex(grid[m.player.position.y], playerChar, m.player.position.x)
@@ -57,7 +57,7 @@ func (m model) View() string {
 		coloredRow := ""
 		for _, char := range row {
 			switch char {
-			case '│', '─', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼', '║', '═', '╔', '╗', '╚', '╝', '╟', '╢', '╤', '╧', '╖', '╓', '╜', '╙':
+			case '│', '─', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼', '║', '═', '╔', '╗', '╚', '╝', '╟', '╢', '╤', '╧', '╖', '╓', '╜', '╙', '╨', '╥':
 				coloredRow += wallStyle.Render(string(char))
 			case 'C':
 				if m.player.rampantState {
@@ -96,7 +96,7 @@ func (m model) View() string {
 
 	// Build the string for display
 	view := strings.Join(grid, "\n")
-	view += fmt.Sprintf("\nLevel: %d/%d, Score: %d/%d, Lives: %d", m.currntLevel+1, len(m.Levels), m.score, m.maxScore, m.lives)
+	view += fmt.Sprintf("\nLevel: %d/%d, Score: %d/%d, Lives: %d", m.currentLevel+1, len(m.Levels), m.score, m.maxScore, m.lives)
 	view += "\nUse arrow keys to move. Press 'q' to quit."
 
 	return view

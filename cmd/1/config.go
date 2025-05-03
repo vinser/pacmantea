@@ -27,7 +27,7 @@ func newModel() model {
 
 }
 
-func createPlayerAt(pos point) player {
+func initPlayerAt(pos point) player {
 	return player{
 		entity: entity{
 			position: pos,
@@ -35,11 +35,11 @@ func createPlayerAt(pos point) player {
 			name:     "Pac-Man",
 			badge:    'C',
 		},
-		blinkState: false,
+		chewState: false,
 	}
 }
 
-func createDotAt(pos point) dot {
+func initDotAt(pos point) dot {
 	return dot{
 		entity: entity{
 			position: pos,
@@ -50,7 +50,7 @@ func createDotAt(pos point) dot {
 	}
 }
 
-func createEnergizer(x, y int) energizer {
+func initEnergizerAt(x, y int) energizer {
 	return energizer{
 		entity: entity{
 			position: point{x: x, y: y},
@@ -61,7 +61,7 @@ func createEnergizer(x, y int) energizer {
 	}
 }
 
-func createGhostAt(pos point, style lipgloss.Style, name string, badge rune) ghost {
+func initGhostAt(pos point, style lipgloss.Style, name string, badge rune) ghost {
 	return ghost{
 		entity: entity{
 			position: pos,
@@ -94,33 +94,33 @@ func initialModel(config Config, currntLevel int) model {
 		for x, char := range row {
 			switch char {
 			case 'C':
-				playerEntity = createPlayerAt(point{x: x, y: y})
+				playerEntity = initPlayerAt(point{x: x, y: y})
 				playerPlaced = true
-				dots = append(dots, createDotAt(point{x: x, y: y}))
+				dots = append(dots, initDotAt(point{x: x, y: y}))
 				maze[y] = replaceAtIndex(maze[y], '.', x)
 			case '.':
-				dots = append(dots, createDotAt(point{x: x, y: y}))
+				dots = append(dots, initDotAt(point{x: x, y: y}))
 			case 'o':
-				energizers = append(energizers, createEnergizer(x, y))
+				energizers = append(energizers, initEnergizerAt(x, y))
 			case 'B':
-				ghosts["Blinky"] = createGhostAt(point{x: x, y: y}, blinkyStyle, "Blinky", 'B')
+				ghosts["Blinky"] = initGhostAt(point{x: x, y: y}, blinkyStyle, "Blinky", 'B')
 				ghostsPlaced["Blinky"] = true
-				dots = append(dots, createDotAt(point{x: x, y: y}))
+				dots = append(dots, initDotAt(point{x: x, y: y}))
 				maze[y] = replaceAtIndex(maze[y], '.', x)
 			case 'I':
-				ghosts["Inky"] = createGhostAt(point{x: x, y: y}, inkyStyle, "Inky", 'I')
+				ghosts["Inky"] = initGhostAt(point{x: x, y: y}, inkyStyle, "Inky", 'I')
 				ghostsPlaced["Inky"] = true
-				dots = append(dots, createDotAt(point{x: x, y: y}))
+				dots = append(dots, initDotAt(point{x: x, y: y}))
 				maze[y] = replaceAtIndex(maze[y], '.', x)
 			case 'P':
-				ghosts["Pinky"] = createGhostAt(point{x: x, y: y}, pinkyStyle, "Pinky", 'P')
+				ghosts["Pinky"] = initGhostAt(point{x: x, y: y}, pinkyStyle, "Pinky", 'P')
 				ghostsPlaced["Pinky"] = true
-				dots = append(dots, createDotAt(point{x: x, y: y}))
+				dots = append(dots, initDotAt(point{x: x, y: y}))
 				maze[y] = replaceAtIndex(maze[y], '.', x)
 			case 'Y':
-				ghosts["Clyde"] = createGhostAt(point{x: x, y: y}, clydeStyle, "Clyde", 'Y')
+				ghosts["Clyde"] = initGhostAt(point{x: x, y: y}, clydeStyle, "Clyde", 'Y')
 				ghostsPlaced["Clyde"] = true
-				dots = append(dots, createDotAt(point{x: x, y: y}))
+				dots = append(dots, initDotAt(point{x: x, y: y}))
 				maze[y] = replaceAtIndex(maze[y], '.', x)
 			}
 		}
@@ -152,22 +152,28 @@ func initialModel(config Config, currntLevel int) model {
 
 	// Convert maze walls to pseudographics for the current maze only
 	maze = replaceWallsWithPseudographics(maze)
+	sounds, err := loadSoundSamples()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	return model{
-		ctx:         ctx,
-		cancel:      cancel,
-		Config:      config,
-		currntLevel: currntLevel,
-		maze:        maze,
-		maxScore:    len(dots),
-		player:      playerEntity,
-		dots:        dots,
-		energizers:  energizers,
-		ghosts:      ghosts,
-		score:       0,
-		gameOver:    false,
-		win:         false,
-		lives:       5, // Initialize with 5 lives
+		ctx:          ctx,
+		cancel:       cancel,
+		Config:       config,
+		currentLevel: currntLevel,
+		maze:         maze,
+		maxScore:     len(dots),
+		player:       playerEntity,
+		dots:         dots,
+		energizers:   energizers,
+		ghosts:       ghosts,
+		score:        0,
+		gameOver:     false,
+		win:          false,
+		lives:        5, // Initialize with 5 lives
+		sounds:       sounds,
 	}
 }
 
@@ -177,7 +183,7 @@ func placePlayerRandomly(maze []string) player {
 	if len(free) > 0 {
 		pos = free[rng.Intn(min(4, len(free)))]
 	}
-	return createPlayerAt(pos)
+	return initPlayerAt(pos)
 
 }
 
@@ -187,7 +193,7 @@ func placeGhostRandomly(maze []string, name string, style lipgloss.Style, badge 
 	if len(free) > 0 {
 		pos = free[rng.Intn(min(6, len(free)))]
 	}
-	return createGhostAt(pos, style, name, badge)
+	return initGhostAt(pos, style, name, badge)
 
 }
 
@@ -230,6 +236,11 @@ func replaceWallsWithPseudographics(maze []string) []string {
 				// Handle outer walls with double-line pseudographics
 				switch {
 				// Handle tunnels
+				case !topBoundary && !bottomBoundary && (leftBoundary || rightBoundary) && (left || right) && !bottom:
+					newRow[x] = '╨'
+				case !topBoundary && !bottomBoundary && (leftBoundary || rightBoundary) && (left || right) && !top:
+					newRow[x] = '╥'
+
 				case !topBoundary && !bottomBoundary && leftBoundary && !rightBoundary && !bottom:
 					newRow[x] = '╜'
 				case !topBoundary && !bottomBoundary && leftBoundary && !rightBoundary && !top:

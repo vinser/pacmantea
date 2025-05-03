@@ -1,37 +1,44 @@
-### 1. Улучшение поведения привидений
- - [x] Преследование Pac-Man: Привидения могут двигаться в сторону Pac-Man.  
- - [x] Убегание: При съедении "силовой таблетки" (например, большая точка) привидения могут начать убегать от Pac-Man.
- - [x] Разные типы привидений: Каждый тип может иметь уникальное поведение (например, один преследует, другой блуждает).
-### 2. Добавление силовых таблеток
- - [x] Можно добавить "силовые таблетки", которые временно дают Pac-Man возможность съедать привидений:
- - [x] Добавьте новый символ (например, O) для обозначения силовых таблеток.
- - [x] Реализуйте временное состояние, в котором Pac-Man может съедать привидений. Привидение должно через некоторое время возрождаться.
-### 3. Уровни
-Добавьте несколько уровней с разными лабиринтами:
- - [x] Псевдослучайное распределение привидений по лабиринту 
- - [x] Создайте массив лабиринтов и переходите на следующий уровень при сборе всех точек.
- - [x] Добавьте анимацию или паузу между уровнями.
-### 4. Счет и рекорды
-Добавьте больше игровой статистики:
- - [x] Отображайте текущий уровень.
- - [ ] Сохраняйте рекорд игрока (например, в файл или через переменную).
- - [ ] Добавьте бонусы за быстрое завершение уровня.
-### 5. Анимации и звуки
-Bubble Tea поддерживает базовые анимации и эффекты:
- - [x] Добавьте анимацию движения Pac-Man и привидений.
- - [ ] Добавьте звуковые эффекты (например, при сборе точки или столкновении с привидением).
-### 6. Цвета
-Bubble Tea позволяет использовать цвета для текстового интерфейса:
- - [x] Раскрасьте Pac-Man, привидения, точки и стены.
-    Например, Pac-Man может быть желтым, привидения — разными цветами, а точки — белыми.
- - [ ] Разные наборы символов и эмодзи
-### 7. Меню и настройки
-Добавьте меню перед началом игры:
-- [ ] Выбор уровня сложности (например, скорость привидений).
-- [ ] Просмотр рекордов.
-- [ ] Инструкции по управлению.
-### 8. Моды
-Корректировка существующих и добавление новых уровней игры:
- - [ ] Возможность корректировки существующих уровней 
- - [ ] Добавление своих уровней игры
- - [ ] Добавление своих символов для пакмана, привидений, точек и энергетиков
+### 1. Improve Ghost Behavior
+ - [x] Chasing Pac-Man: Ghosts can move toward Pac-Man.  
+ - [x] Fleeing: When a "power pellet" (e.g., a large dot) is eaten, ghosts can start fleeing from Pac-Man.
+ - [x] Different ghost types: Each type can have unique behavior (e.g., one chases, another wanders).
+
+### 2. Add Power Pellets
+ - [x] Add "power pellets" that temporarily allow Pac-Man to eat ghosts.
+ - [x] Add a new symbol (e.g., O) to represent power pellets.
+ - [x] Implement a temporary state where Pac-Man can eat ghosts. Ghosts should respawn after a certain time.
+
+### 3. Levels
+Add multiple levels with different mazes:
+ - [x] Pseudo-random distribution of ghosts in the maze.
+ - [x] Create an array of mazes and move to the next level after collecting all dots.
+ - [x] Add an animation or pause between levels.
+
+### 4. Score and Records
+Add more game statistics:
+ - [x] Display the current level.
+ - [ ] Save the player's high score (e.g., to a file or variable).
+ - [ ] Add bonuses for quickly completing a level.
+
+### 5. Animations and Sounds
+Bubble Tea supports basic animations and effects:
+ - [x] Add animations for Pac-Man and ghost movement.
+ - [x] Add sound effects (e.g., when collecting a dot or colliding with a ghost).
+
+### 6. Colors and Emojis
+Bubble Tea allows the use of colors for the text interface:
+ - [x] Add colors for Pac-Man, ghosts, dots, and walls.
+    For example, Pac-Man can be yellow, ghosts can have different colors, and dots can be white.
+ - [ ] Add different sets of symbols and emojis.
+
+### 7. Menu and Settings
+Add a menu before starting the game:
+ - [ ] Difficulty selection (e.g., ghost speed).
+ - [ ] View high scores.
+ - [ ] Instructions for controls.
+
+### 8. Mods
+Adjust existing levels and add new game levels:
+ - [ ] Ability to modify existing levels.
+ - [ ] Add custom game levels.
+ - [ ] Add custom symbols for Pac-Man, ghosts, dots, and power pellets.

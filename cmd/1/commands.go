@@ -40,7 +40,7 @@ func (m *model) ghostMoveTick() tea.Cmd {
 		// Do not schedule ghost movement if the game is won
 		return func() tea.Msg { return nil }
 	}
-	return tea.Tick(time.Duration(float64(time.Second)/float64(m.Difficulties[m.Levels[m.currntLevel].Difficulty].GhostSpeed)), func(_ time.Time) tea.Msg {
+	return tea.Tick(time.Second/time.Duration(m.Difficulties[m.Levels[m.currentLevel].DifficultyName].GhostSpeed), func(_ time.Time) tea.Msg {
 		select {
 		case <-m.ctx.Done():
 			return nil
@@ -55,7 +55,7 @@ type rampantEndMsg struct{}
 
 // Command to start the rampant timer
 func (m *model) startRampantTimer() tea.Cmd {
-	return tea.Tick(time.Duration(m.Difficulties[m.Levels[m.currntLevel].Difficulty].RampantDuration)*time.Second, func(_ time.Time) tea.Msg {
+	return tea.Tick(time.Duration(m.Difficulties[m.Levels[m.currentLevel].DifficultyName].RampantDuration)*time.Second, func(_ time.Time) tea.Msg {
 		select {
 		case <-m.ctx.Done():
 			return nil
@@ -69,7 +69,7 @@ type cooldownEndMsg struct{}
 
 // Command to start the cooldown timer
 func (m *model) startCooldownTimer() tea.Cmd {
-	return tea.Tick(time.Duration(m.Difficulties[m.Levels[m.currntLevel].Difficulty].CooldownDuration)*time.Second, func(_ time.Time) tea.Msg {
+	return tea.Tick(time.Duration(m.Difficulties[m.Levels[m.currentLevel].DifficultyName].CooldownDuration)*time.Second, func(_ time.Time) tea.Msg {
 		select {
 		case <-m.ctx.Done():
 			return nil
@@ -110,11 +110,13 @@ func (m *model) checkGhostCollisions() tea.Cmd {
 			if m.player.position == g.position {
 				if m.player.rampantState || m.player.cooldownState {
 					g.dead = true
+					go m.playSound(SOUND_EATGHOST)
 					m.ghosts[name] = g
 					m.maze[g.position.y] = replaceAtIndex(m.maze[g.position.y], ' ', g.position.x) // Remove ghost from maze
-					return m.startGhostRevivalTimer(name, time.Duration(m.Difficulties[m.Levels[m.currntLevel].Difficulty].RevivalTimer)*time.Second)
+					return m.startGhostRevivalTimer(name, time.Duration(m.Difficulties[m.Levels[m.currentLevel].DifficultyName].RevivalTimer)*time.Second)
 				} else {
 					m.gameOver = true
+					go m.playSound(SOUND_DEATH)
 				}
 			}
 		}

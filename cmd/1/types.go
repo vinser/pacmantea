@@ -7,9 +7,9 @@ import (
 )
 
 type Level struct {
-	Name       string   `yaml:"name"`
-	Difficulty string   `yaml:"difficulty"`
-	Maze       []string `yaml:"maze"`
+	Name           string   `yaml:"name"`
+	DifficultyName string   `yaml:"difficulty"`
+	Maze           []string `yaml:"maze"`
 }
 
 type Config struct {
@@ -42,7 +42,7 @@ type entity struct {
 
 type player struct {
 	entity
-	blinkState    bool
+	chewState     bool
 	rampantState  bool
 	cooldownState bool
 }
@@ -65,16 +65,17 @@ type model struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 	Config
-	currntLevel int
-	maze        []string
-	maxScore    int
-	player      player
-	dots        []dot
-	energizers  []energizer
-	ghosts      map[string]ghost
-	score       int
-	gameOver    bool
-	win         bool
-	winGame     bool
-	lives       int
+	currentLevel int
+	maze         []string
+	maxScore     int
+	player       player
+	dots         []dot
+	energizers   []energizer
+	ghosts       map[string]ghost
+	score        int
+	gameOver     bool
+	win          bool
+	winGame      bool
+	lives        int
+	sounds       map[string]sound
 }
