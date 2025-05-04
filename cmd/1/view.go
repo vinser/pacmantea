@@ -118,13 +118,67 @@ var (
 	clydeStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("208")).Bold(true) // Orange
 )
 
-// var pacman = []rune{'⭘', '◐', '◓', '◑', '◒'}
+// Define Pac-Man badges indexed by type and move direction
+var pacmanBadges = map[string]map[string][]rune{
+	"latin": {
+		"open":  {'С'}, // Pac-Man open mouth for all directions
+		"right": {'c'}, // Pac-Man moving right (closed mouth)
+		"down":  {'c'}, // Pac-Man moving down (closed mouth)
+		"left":  {'c'}, // Pac-Man moving left (closed mouth)
+		"up":    {'c'}, // Pac-Man moving up (closed mouth)
+	},
+	"modern": {
+		"open":  {'■'}, // Modern Pac-Man open mouth for all directions
+		"right": {'▶'}, // Modern Pac-Man moving right (closed mouth)
+		"down":  {'▼'}, // Modern Pac-Man moving down (closed mouth)
+		"left":  {'◀'}, // Modern Pac-Man moving left (closed mouth)
+		"up":    {'▲'}, // Modern Pac-Man moving up (closed mouth)
+	},
+	"emoji": {
+		"open":  {'😃'}, // Emoji Pac-Man open mouth for all directions
+		"right": {'😀'}, // Emoji Pac-Man moving right (closed mouth)
+		"down":  {'😋'}, // Emoji Pac-Man moving down (closed mouth)
+		"left":  {'😉'}, // Emoji Pac-Man moving left (closed mouth)
+		"up":    {'😅'}, // Emoji Pac-Man moving up (closed mouth)
+	},
+}
 
-// // Ghosts
-// var letters = []rune{'B', 'P', 'I', 'Y'}     	// Letters
-// var ghosts = []rune{'👿', '👽', '🤖', '👾'}    // Ghosts
-// var hebrew = []rune{'ℵ', 'ℶ', 'ℷ', 'ℸ'}      	// Hebrew ghosts
-// var greek = []rune{'Α', 'Β', 'Γ', 'Δ'}       	// Greek ghosts
-// var control = []rune{'␊', '␋', '␌', '␍'}		// Control ghosts
-// var currency = []rune{'$', '€', '£', '¥'}    	// Currency ghosts
-// var mathematics = []rune{'∀', '√', '∂', '∫'} 	// Math ghosts
+// Define ghost badges indexed by type and ghost name
+var ghostBadges = map[string]map[string]rune{
+	"latin": {
+		"B": 'B', // Blinky
+		"P": 'P', // Pinky
+		"I": 'I', // Inky
+		"Y": 'Y', // Clyde
+	},
+	"hebrew": {
+		"B": 'ℵ', // Blinky
+		"P": 'ℶ', // Pinky
+		"I": 'ℷ', // Inky
+		"Y": 'ℸ', // Clyde
+	},
+	"greek": {
+		"B": 'Α', // Blinky
+		"P": 'Β', // Pinky
+		"I": 'Γ', // Inky
+		"Y": 'Δ', // Clyde
+	},
+	"symbols": {
+		"B": '🎃', // Blinky
+		"P": '😈', // Pinky
+		"I": '👽', // Inky
+		"Y": '👻', // Clyde
+	},
+	"currency": {
+		"B": '$', // Blinky
+		"P": '€', // Pinky
+		"I": '£', // Inky
+		"Y": '¥', // Clyde
+	},
+	"math": {
+		"B": '∀', // Blinky
+		"P": '√', // Pinky
+		"I": '∂', // Inky
+		"Y": '∫', // Clyde
+	},
+}
