@@ -88,34 +88,34 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		case "up":
-			if m.canMove(m.player.position.x, m.player.position.y-1) {
-				m.player.position.y--
-				m.player.move = direction{x: 0, y: -1}
+			if m.canMove(m.pacman.position.x, m.pacman.position.y-1) {
+				m.pacman.position.y--
+				m.pacman.move = direction{x: 0, y: -1}
 			}
 		case "down":
-			if m.canMove(m.player.position.x, m.player.position.y+1) {
-				m.player.position.y++
-				m.player.move = direction{x: 0, y: 1}
+			if m.canMove(m.pacman.position.x, m.pacman.position.y+1) {
+				m.pacman.position.y++
+				m.pacman.move = direction{x: 0, y: 1}
 			}
 		case "left":
-			newX := m.tunnelMove(m.player.position.x - 1)
-			if m.canMove(newX, m.player.position.y) {
-				m.player.position.x = newX
-				m.player.move = direction{x: -1, y: 0}
+			newX := m.tunnelMove(m.pacman.position.x - 1)
+			if m.canMove(newX, m.pacman.position.y) {
+				m.pacman.position.x = newX
+				m.pacman.move = direction{x: -1, y: 0}
 			}
 		case "right":
-			newX := m.tunnelMove(m.player.position.x + 1)
-			if m.canMove(newX, m.player.position.y) {
-				m.player.position.x = newX
-				m.player.move = direction{x: 1, y: 0}
+			newX := m.tunnelMove(m.pacman.position.x + 1)
+			if m.canMove(newX, m.pacman.position.y) {
+				m.pacman.position.x = newX
+				m.pacman.move = direction{x: 1, y: 0}
 			}
 		}
 
 		// Check for dot collection
 		for i := len(m.dots) - 1; i >= 0; i-- {
-			if m.player.position == m.dots[i].position {
+			if m.pacman.position == m.dots[i].position {
 				m.score++
-				m.maze[m.player.position.y] = replaceAtIndex(m.maze[m.player.position.y], ' ', m.player.position.x) // Replace dot with a space
+				m.maze[m.pacman.position.y] = replaceAtIndex(m.maze[m.pacman.position.y], ' ', m.pacman.position.x) // Replace dot with a space
 				m.dots = append(m.dots[:i], m.dots[i+1:]...)
 				go m.playSound(SOUND_CHOMP)
 				break
@@ -131,13 +131,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// Check for energizer collection
 		for i := len(m.energizers) - 1; i >= 0; i-- {
-			if m.player.position == m.energizers[i].position {
+			if m.pacman.position == m.energizers[i].position {
 				m.score++
-				m.maze[m.player.position.y] = replaceAtIndex(m.maze[m.player.position.y], ' ', m.player.position.x) // Replace dot with a space
+				m.maze[m.pacman.position.y] = replaceAtIndex(m.maze[m.pacman.position.y], ' ', m.pacman.position.x) // Replace dot with a space
 				m.energizers = append(m.energizers[:i], m.energizers[i+1:]...)
 
 				// Activate rampant mode
-				m.player.rampantState = true
+				m.pacman.rampantState = true
 				go m.playSound(SOUND_EATFRUIT)
 				return m, m.startRampantTimer()
 			}
@@ -150,7 +150,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if g.dead {
 				continue
 			}
-			if m.player.rampantState {
+			if m.pacman.rampantState {
 				g.position = m.escapeMove(g.position)
 			} else {
 				switch g.name {
@@ -169,21 +169,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Start the next tick for ghost movement
 		return m, tea.Batch(m.ghostMoveTick(), m.checkGhostCollisions())
 
-	case playerBlinkMsg:
+	case pacmanBlinkMsg:
 		// Toggle the blink state
-		m.player.chewState = !m.player.chewState
+		m.pacman.chewState = !m.pacman.chewState
 		// Schedule the next blink
-		return m, m.playerBlinkTick()
+		return m, m.pacmanBlinkTick()
 
 	case rampantEndMsg:
 		// Start cooldown
-		m.player.cooldownState = true
+		m.pacman.cooldownState = true
 		return m, m.startCooldownTimer()
 
 	case cooldownEndMsg:
 		// End cooldown and fully reset Pac-Man's state
-		m.player.rampantState = false
-		m.player.cooldownState = false
+		m.pacman.rampantState = false
+		m.pacman.cooldownState = false
 		return m, nil
 
 	case ghostReviveMsg:

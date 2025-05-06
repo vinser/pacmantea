@@ -45,12 +45,12 @@ func (m model) View() string {
 		grid[g.position.y] = replaceAtIndex(grid[g.position.y], ghostChar, g.position.x)
 	}
 
-	// Place the player with chewing effect
+	// Place the pacman with chewing effect
 	playerChar := 'C'
-	if m.player.chewState {
+	if m.pacman.chewState {
 		playerChar = 'c'
 	}
-	grid[m.player.position.y] = replaceAtIndex(grid[m.player.position.y], playerChar, m.player.position.x)
+	grid[m.pacman.position.y] = replaceAtIndex(grid[m.pacman.position.y], playerChar, m.pacman.position.x)
 
 	// Apply styles to the grid
 	for y, row := range grid {
@@ -60,20 +60,20 @@ func (m model) View() string {
 			case '│', '─', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼', '║', '═', '╔', '╗', '╚', '╝', '╟', '╢', '╤', '╧', '╖', '╓', '╜', '╙', '╨', '╥':
 				coloredRow += wallStyle.Render(string(char))
 			case 'C':
-				if m.player.rampantState {
+				if m.pacman.rampantState {
 					coloredRow += energyStyle.Render(string(char))
 				} else {
-					coloredRow += m.player.style.Render(string(char))
+					coloredRow += m.pacman.style.Render(string(char))
 				}
 			case 'c':
-				if m.player.rampantState {
-					if m.player.cooldownState {
-						coloredRow += playerStyle.Render(string(char))
+				if m.pacman.rampantState {
+					if m.pacman.cooldownState {
+						coloredRow += pacmanStyle.Render(string(char))
 					} else {
 						coloredRow += energyStyle.Render(string(char))
 					}
 				} else {
-					coloredRow += playerStyle.Render(string(char))
+					coloredRow += pacmanStyle.Render(string(char))
 				}
 			case 'B':
 				coloredRow += blinkyStyle.Render(string(char))
@@ -105,7 +105,7 @@ func (m model) View() string {
 // Define styles for different elements
 var (
 	wallStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("2"))            // Green
-	playerStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("3")).Bold(true) // Yellow
+	pacmanStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("3")).Bold(true) // Yellow
 	dotStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("15"))           // White
 	energyStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("4")).Bold(true) // Blue
 )

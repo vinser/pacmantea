@@ -43,7 +43,7 @@ func traverseOrder(maze []string, prox proximity) []point {
 	return points
 }
 
-// Sort directions by distance to the player
+// Sort directions by distance to the pacman
 func sortDirectionsByDistance(p1, p2 point) []point {
 	directions := []point{{0, -1}, {0, 1}, {-1, 0}, {1, 0}}
 	sort.Slice(directions, func(i, j int) bool {

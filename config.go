@@ -65,11 +65,11 @@ func newModel() model {
 	return initialModel(config, 0)
 }
 
-func initPlayerAt(pos point) player {
-	return player{
+func initPacmanAt(pos point) pacman {
+	return pacman{
 		entity: entity{
 			position: pos,
-			style:    playerStyle,
+			style:    pacmanStyle,
 			name:     "Pac-Man",
 			badge:    'C',
 		},
@@ -120,20 +120,20 @@ func initialModel(config Config, currntLevel int) model {
 		log.Fatal("The maze must be at least 5x5")
 	}
 
-	var playerEntity player
+	var pacmanEntity pacman
 	dots := []dot{}
 	energizers := []energizer{}
 	ghosts := make(map[string]ghost)
 
-	playerPlaced := false
+	pacmanPlaced := false
 	ghostsPlaced := map[string]bool{"Blinky": false, "Inky": false, "Pinky": false, "Clyde": false}
 
 	for y, row := range maze {
 		for x, char := range row {
 			switch char {
 			case 'C':
-				playerEntity = initPlayerAt(point{x: x, y: y})
-				playerPlaced = true
+				pacmanEntity = initPacmanAt(point{x: x, y: y})
+				pacmanPlaced = true
 				dots = append(dots, initDotAt(point{x: x, y: y}))
 				maze[y] = replaceAtIndex(maze[y], '.', x)
 			case '.':
@@ -164,9 +164,9 @@ func initialModel(config Config, currntLevel int) model {
 		}
 	}
 
-	// Randomly place the player from edges to center if not placed
-	if !playerPlaced {
-		playerEntity = placePlayerRandomly(maze)
+	// Randomly place the pacman from edges to center if not placed
+	if !pacmanPlaced {
+		pacmanEntity = placePacmanRandomly(maze)
 	}
 
 	// Randomly place ghosts near the center if not placed
@@ -203,7 +203,7 @@ func initialModel(config Config, currntLevel int) model {
 		currentLevel: currntLevel,
 		maze:         maze,
 		maxScore:     len(dots),
-		player:       playerEntity,
+		pacman:       pacmanEntity,
 		dots:         dots,
 		energizers:   energizers,
 		ghosts:       ghosts,
@@ -215,13 +215,13 @@ func initialModel(config Config, currntLevel int) model {
 	}
 }
 
-func placePlayerRandomly(maze []string) player {
+func placePacmanRandomly(maze []string) pacman {
 	pos := point{}
 	free := traverseOrder(maze, MazePerifery)
 	if len(free) > 0 {
 		pos = free[rng.Intn(min(4, len(free)))]
 	}
-	return initPlayerAt(pos)
+	return initPacmanAt(pos)
 
 }
 

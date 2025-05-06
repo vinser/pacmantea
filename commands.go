@@ -6,27 +6,27 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-const playerBlinkTickDuration = time.Second / 2
+const pacmanBlinkTickDuration = time.Second / 2
 
 func (m model) Init() tea.Cmd {
 	cmds := []tea.Cmd{
-		m.playerBlinkTick(), // Start the timer for Pac-Man blinking
+		m.pacmanBlinkTick(), // Start the timer for Pac-Man blinking
 		m.ghostMoveTick(),   // Start the timer for ghost movement
 	}
 	return tea.Batch(cmds...)
 }
 
 // Message type for blinking
-type playerBlinkMsg struct{}
+type pacmanBlinkMsg struct{}
 
 // Command to trigger Pac-Man blinking
-func (m *model) playerBlinkTick() tea.Cmd {
-	return tea.Tick(playerBlinkTickDuration, func(_ time.Time) tea.Msg {
+func (m *model) pacmanBlinkTick() tea.Cmd {
+	return tea.Tick(pacmanBlinkTickDuration, func(_ time.Time) tea.Msg {
 		select {
 		case <-m.ctx.Done():
 			return nil
 		default:
-			return playerBlinkMsg{}
+			return pacmanBlinkMsg{}
 		}
 	})
 }
@@ -107,8 +107,8 @@ func (m *model) checkGhostCollisions() tea.Cmd {
 			if g.dead {
 				continue
 			}
-			if m.player.position == g.position {
-				if m.player.rampantState || m.player.cooldownState {
+			if m.pacman.position == g.position {
+				if m.pacman.rampantState || m.pacman.cooldownState {
 					g.dead = true
 					go m.playSound(SOUND_EATGHOST)
 					m.ghosts[name] = g

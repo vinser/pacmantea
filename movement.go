@@ -6,25 +6,25 @@ func (m model) chaosMove(p point) point {
 }
 
 func (m model) straitMove(p point) point {
-	destination := m.player.position
+	destination := m.pacman.position
 	directions := sortDirectionsByDistance(p, destination)
 	return m.ghostMove(p, directions)
 }
 
 func (m model) predictMove(p point) point {
-	destination := point{x: m.player.position.x + m.player.move.x, y: m.player.position.y + m.player.move.y}
+	destination := point{x: m.pacman.position.x + m.pacman.move.x, y: m.pacman.position.y + m.pacman.move.y}
 	directions := sortDirectionsByDistance(p, destination)
 	return m.ghostMove(p, directions)
 }
 
 func (m model) cagyMove(p point) point {
-	destination := point{x: m.player.position.x - 2*m.player.move.x, y: m.player.position.y - 2*m.player.move.y}
+	destination := point{x: m.pacman.position.x - 2*m.pacman.move.x, y: m.pacman.position.y - 2*m.pacman.move.y}
 	directions := sortDirectionsByDistance(p, destination)
 	return m.ghostMove(p, directions)
 }
 
 func (m model) escapeMove(p point) point {
-	destination := point{x: 2*p.x - m.player.position.x, y: 2*p.y - m.player.position.y}
+	destination := point{x: 2*p.x - m.pacman.position.x, y: 2*p.y - m.pacman.position.y}
 	directions := sortDirectionsByDistance(p, destination)
 	return m.ghostMove(p, directions)
 }

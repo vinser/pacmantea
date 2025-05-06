@@ -40,7 +40,7 @@ type entity struct {
 	badge    rune
 }
 
-type player struct {
+type pacman struct {
 	entity
 	chewState     bool
 	rampantState  bool
@@ -68,7 +68,7 @@ type model struct {
 	currentLevel int
 	maze         []string
 	maxScore     int
-	player       player
+	pacman       pacman
 	dots         []dot
 	energizers   []energizer
 	ghosts       map[string]ghost
