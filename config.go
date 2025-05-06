@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"path"
 
 	"github.com/charmbracelet/lipgloss"
 	"gopkg.in/yaml.v3"
@@ -13,18 +15,54 @@ import (
 //go:embed config.yml
 var CONFIG_DATA []byte
 
+var configPath string = path.Join("config", "config.yml")
+
 // Simulate ghosts love
 var ghostsLove bool = false
 
+func writeDefaultConfig() error {
+	// Write the embedded CONFIG_DATA to a file
+	if err := os.MkdirAll("config", os.ModePerm); err != nil {
+		return err
+	}
+	file, err := os.Create(configPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write(CONFIG_DATA)
+	return err
+}
+
 func newModel() model {
 	var config Config
-	err := yaml.Unmarshal(CONFIG_DATA, &config)
-	if err != nil {
-		log.Fatal("Error:", err)
+
+	// Determine the config path based on the environment variable
+	configPath := os.Getenv("PACMANTEA_CONFIG_PATH")
+	if configPath == "" {
+		configPath = path.Join("config", "config.yml")
 	}
 
-	return initialModel(config, 0)
+	// Load the configuration from the file or use the embedded one as a fallback
+	var data []byte
+	var err error
+	if _, err = os.Stat(configPath); err == nil {
+		data, err = os.ReadFile(configPath)
+		if err != nil {
+			log.Fatalf("Failed to read %s: %v", configPath, err)
+		}
+	} else {
+		data = CONFIG_DATA
+	}
 
+	// Unmarshal the configuration
+	if err = yaml.Unmarshal(data, &config); err != nil {
+		log.Fatalf("Failed to parse %s: %v", configPath, err)
+	}
+
+	// Initialize the game model with the loaded configuration
+	return initialModel(config, 0)
 }
 
 func initPlayerAt(pos point) player {
