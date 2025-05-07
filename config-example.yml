@@ -1,24 +1,57 @@
-difficulties:
-  Easy:
-    ghost_speed:       1
-    rampant_duration:  5
-    cooldown_duration: 2
-    revival_timer:     5
+badges:
+  pacman: # Pac-Man badges indexed by style and move direction
+    latin: # Classic Latin-style badges
+      open: "C"  # Pac-Man open mouth
+      right: "c" # Pac-Man facing right
+      left: "c"  # Pac-Man facing left
+      up: "c"    # Pac-Man facing up
+      down: "c"  # Pac-Man facing down
+    modern: # Modern-style badges
+      open: "■"
+      right: "▶"
+      left: "◀"
+      up: "▲"
+      down: "▼"
+  ghosts: # Ghost badges indexed by type and ghost name
+    latin: # Classic Latin-style ghost badges
+      B: "B" # Blinky
+      P: "P" # Pinky
+      I: "I" # Inky
+      Y: "Y" # Clyde
+    hebrew: # Hebrew-style ghost badges
+      B: "ℵ"
+      P: "ℶ"
+      I: "ℷ"
+      Y: "ℸ"
+    greek: # Greek-style ghost badges
+      B: "Α"
+      P: "Β"
+      I: "Γ"
+      Y: "Δ"
+difficulties: # Difficulty settings for the game
+  Easy: # Easy difficulty level
+    ghost_speed:       1 # Ghost movement speed
+    rampant_duration:  5 # Duration of Pac-Man's rampant state
+    cooldown_duration: 2 # Cooldown duration after rampant state
+    revival_timer:     5 # Time for ghosts to revive
+  Medium: # Medium difficulty level
   Medium:
     ghost_speed:       2
     rampant_duration:  3
     cooldown_duration: 2
     revival_timer:     3
-  Hard:
+  Hard: # Hard difficulty level
     ghost_speed:       3
     rampant_duration:  2
     cooldown_duration: 2
     revival_timer:     2
 
-levels:
-  - name: Level 1
-    difficulty: Easy
-    maze:
+levels: # Levels configuration
+  - name: Level 1 # Level 1 configuration
+    difficulty: Easy # Level 1 difficulty
+    pacman_badge: "latin"  # Level 1 badge style for Pac-Man
+    ghost_badges: "latin"  # Level 1 badge style for ghosts
+    maze: # Level 1 maze layout
       - "###################"
       - "#o.......#.......o#"
       - "#.###.#..#..#.###.#"
@@ -32,6 +65,8 @@ levels:
       - "###################"
   - name: Level 2
     difficulty: Medium
+    pacman_badge: "latin"
+    ghost_badges: "latin"
     maze:
       - "###############################"
       - "#o.............#.............o#"
@@ -61,6 +96,8 @@ levels:
       - "###############################"
   - name: Level 3
     difficulty: Hard
+    pacman_badge: "latin"
+    ghost_badges: "latin"
     maze:
       - "###########################"
       - "#............#............#"
@@ -87,6 +124,8 @@ levels:
       - "###########################"
   - name: Greek
     difficulty: Easy
+    pacman_badge: "latin"
+    ghost_badges: "greek"
     maze:
       - "#########################"
       - "#.....#.......#.......#.#"
@@ -109,6 +148,8 @@ levels:
       - "#########################"
   - name: Habrew 
     difficulty: Easy
+    pacman_badge: "modern
+    ghost_badges: "hebrew"
     maze:
       - "#############################################################"
       - "#...........................................................#"
@@ -117,17 +158,17 @@ levels:
       - "#.#.#.#.#.#.#.#.#.#.......#.......#.......#.#.#.#.#.#.#.#.#.#"
       - "#.#.#.#.#.#.#.#.#.#.....#...........#.....#.#.#.#.#.#.#.#.#.#"
       - "#.#################...#...............#...#################.#"
-      - "#...................#...................#...................#"
+      - "#..................o#...................#o..................#"
       - "#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#"
       - "#...#...........#.............#.............#...........#...#"
       - "#.....#.......#.......#.#.#.#.#.#.#.#.#.......#.......#.....#"
       - "#.......#...#.........#.#.#.#.#.#.#.#.#.........#...#.......#"
-      - "#.........#...........#################...........#.........#"
+      - "#........o#...........#################...........#o........#"
       - "#.......#...#.................#.................#...#.......#"
       - "#.....#.......#.........#############.........#.......#.....#"
       - "#...#...........#...........................#...........#...#"
       - "#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#"
-      - "#...................#...................#...................#"
+      - "#..................o#...................#o..................#"
       - "#.........#...........#...............#...........#.........#"
       - "#.#.#.#.#.#.#.#.#.#.....#...........#.....#.#.#.#.#.#.#.#.#.#"
       - "#.#.#.#.#.#.#.#.#.#.......#.......#.......#.#.#.#.#.#.#.#.#.#"
