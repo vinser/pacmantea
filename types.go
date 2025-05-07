@@ -10,9 +10,12 @@ type Level struct {
 	Name           string   `yaml:"name"`
 	DifficultyName string   `yaml:"difficulty"`
 	Maze           []string `yaml:"maze"`
+	PacmanBadge    string   `yaml:"pacman_badge"` // Badge style for Pac-Man
+	GhostBadges    string   `yaml:"ghost_badges"` // Badge style for ghosts
 }
 
 type Config struct {
+	Badges       Badges                `yaml:"badges"`
 	Difficulties map[string]Difficulty `yaml:"difficulties"`
 	Levels       []Level               `yaml:"levels"`
 }
@@ -22,6 +25,11 @@ type Difficulty struct {
 	RampantDuration  int `yaml:"rampant_duration"`
 	CooldownDuration int `yaml:"cooldown_duration"`
 	RevivalTimer     int `yaml:"revival_timer"`
+}
+
+type Badges struct {
+	Pacman map[string]map[string]string `yaml:"pacman"` // Badge styles for Pac-Man
+	Ghosts map[string]map[string]string `yaml:"ghosts"` // Badge styles for ghosts
 }
 
 type point struct {

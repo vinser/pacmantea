@@ -46,49 +46,29 @@ func (m model) View() string {
 	}
 
 	// Place the pacman with chewing effect
-	playerChar := 'C'
+	pacmanChar := 'C'
 	if m.pacman.chewState {
-		playerChar = 'c'
+		pacmanChar = 'c'
 	}
-	grid[m.pacman.position.y] = replaceAtIndex(grid[m.pacman.position.y], playerChar, m.pacman.position.x)
+	grid[m.pacman.position.y] = replaceAtIndex(grid[m.pacman.position.y], pacmanChar, m.pacman.position.x)
 
 	// Apply styles to the grid
 	for y, row := range grid {
 		coloredRow := ""
-		for _, char := range row {
-			switch char {
+		for _, rn := range row {
+			switch rn {
 			case '│', '─', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼', '║', '═', '╔', '╗', '╚', '╝', '╟', '╢', '╤', '╧', '╖', '╓', '╜', '╙', '╨', '╥':
-				coloredRow += wallStyle.Render(string(char))
-			case 'C':
-				if m.pacman.rampantState {
-					coloredRow += energyStyle.Render(string(char))
-				} else {
-					coloredRow += m.pacman.style.Render(string(char))
-				}
-			case 'c':
-				if m.pacman.rampantState {
-					if m.pacman.cooldownState {
-						coloredRow += pacmanStyle.Render(string(char))
-					} else {
-						coloredRow += energyStyle.Render(string(char))
-					}
-				} else {
-					coloredRow += pacmanStyle.Render(string(char))
-				}
-			case 'B':
-				coloredRow += blinkyStyle.Render(string(char))
-			case 'I':
-				coloredRow += inkyStyle.Render(string(char))
-			case 'P':
-				coloredRow += pinkyStyle.Render(string(char))
-			case 'Y':
-				coloredRow += clydeStyle.Render(string(char))
+				coloredRow += wallStyle.Render(string(rn))
+			case 'C', 'c':
+				coloredRow += m.renderPacman(rn)
+			case 'B', 'I', 'P', 'Y':
+				coloredRow += m.renderGhost(rn)
 			case '.':
-				coloredRow += dotStyle.Render(string(char))
+				coloredRow += dotStyle.Render(string(rn))
 			case 'o':
-				coloredRow += energyStyle.Render(string(char))
+				coloredRow += energyStyle.Render(string(rn))
 			default:
-				coloredRow += string(char)
+				coloredRow += string(rn)
 			}
 		}
 		grid[y] = coloredRow
@@ -100,6 +80,61 @@ func (m model) View() string {
 	view += "\nUse arrow keys to move. Press 'q' to quit."
 
 	return view
+}
+
+func (m *model) renderPacman(r rune) string {
+	var rn string
+	switch r {
+	case 'C':
+		rn = m.Config.Badges.Pacman[m.Config.Levels[m.currentLevel].PacmanBadge]["open"]
+		if m.pacman.rampantState {
+			return energyStyle.Render(rn)
+		} else {
+			return m.pacman.style.Render(rn)
+		}
+	case 'c':
+		switch m.pacman.move {
+		case direction{x: 1, y: 0}: // Moving right
+			rn = m.Config.Badges.Pacman[m.Config.Levels[m.currentLevel].PacmanBadge]["right"]
+		case direction{x: -1, y: 0}: // Moving left
+			rn = m.Config.Badges.Pacman[m.Config.Levels[m.currentLevel].PacmanBadge]["left"]
+		case direction{x: 0, y: -1}: // Moving up
+			rn = m.Config.Badges.Pacman[m.Config.Levels[m.currentLevel].PacmanBadge]["up"]
+		case direction{x: 0, y: 1}: // Moving down
+			rn = m.Config.Badges.Pacman[m.Config.Levels[m.currentLevel].PacmanBadge]["down"]
+		default:
+			rn = m.Config.Badges.Pacman[m.Config.Levels[m.currentLevel].PacmanBadge]["open"]
+		}
+		if m.pacman.rampantState {
+			if m.pacman.cooldownState {
+				return pacmanStyle.Render(rn)
+			} else {
+				return energyStyle.Render(rn)
+			}
+		} else {
+			return pacmanStyle.Render(rn)
+		}
+	}
+	return pacmanStyle.Render(string(rn))
+}
+
+func (m *model) renderGhost(r rune) string {
+	var rn string
+	switch r {
+	case 'B':
+		rn = m.Config.Badges.Ghosts[m.Config.Levels[m.currentLevel].GhostBadges][string(r)]
+		return blinkyStyle.Render(rn)
+	case 'I':
+		rn = m.Config.Badges.Ghosts[m.Config.Levels[m.currentLevel].GhostBadges][string(r)]
+		return inkyStyle.Render(rn)
+	case 'P':
+		rn = m.Config.Badges.Ghosts[m.Config.Levels[m.currentLevel].GhostBadges][string(r)]
+		return pinkyStyle.Render(rn)
+	case 'Y':
+		rn = m.Config.Badges.Ghosts[m.Config.Levels[m.currentLevel].GhostBadges][string(r)]
+		return clydeStyle.Render(rn)
+	}
+	return rn
 }
 
 // Define styles for different elements
@@ -117,68 +152,3 @@ var (
 	pinkyStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("201")).Bold(true) // Pink
 	clydeStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("208")).Bold(true) // Orange
 )
-
-// Define Pac-Man badges indexed by type and move direction
-var pacmanBadges = map[string]map[string][]rune{
-	"latin": {
-		"open":  {'С'}, // Pac-Man open mouth for all directions
-		"right": {'c'}, // Pac-Man moving right (closed mouth)
-		"down":  {'c'}, // Pac-Man moving down (closed mouth)
-		"left":  {'c'}, // Pac-Man moving left (closed mouth)
-		"up":    {'c'}, // Pac-Man moving up (closed mouth)
-	},
-	"modern": {
-		"open":  {'■'}, // Modern Pac-Man open mouth for all directions
-		"right": {'▶'}, // Modern Pac-Man moving right (closed mouth)
-		"down":  {'▼'}, // Modern Pac-Man moving down (closed mouth)
-		"left":  {'◀'}, // Modern Pac-Man moving left (closed mouth)
-		"up":    {'▲'}, // Modern Pac-Man moving up (closed mouth)
-	},
-	"emoji": {
-		"open":  {'😃'}, // Emoji Pac-Man open mouth for all directions
-		"right": {'😀'}, // Emoji Pac-Man moving right (closed mouth)
-		"down":  {'😋'}, // Emoji Pac-Man moving down (closed mouth)
-		"left":  {'😉'}, // Emoji Pac-Man moving left (closed mouth)
-		"up":    {'😅'}, // Emoji Pac-Man moving up (closed mouth)
-	},
-}
-
-// Define ghost badges indexed by type and ghost name
-var ghostBadges = map[string]map[string]rune{
-	"latin": {
-		"B": 'B', // Blinky
-		"P": 'P', // Pinky
-		"I": 'I', // Inky
-		"Y": 'Y', // Clyde
-	},
-	"hebrew": {
-		"B": 'ℵ', // Blinky
-		"P": 'ℶ', // Pinky
-		"I": 'ℷ', // Inky
-		"Y": 'ℸ', // Clyde
-	},
-	"greek": {
-		"B": 'Α', // Blinky
-		"P": 'Β', // Pinky
-		"I": 'Γ', // Inky
-		"Y": 'Δ', // Clyde
-	},
-	"symbols": {
-		"B": '🎃', // Blinky
-		"P": '😈', // Pinky
-		"I": '👽', // Inky
-		"Y": '👻', // Clyde
-	},
-	"currency": {
-		"B": '$', // Blinky
-		"P": '€', // Pinky
-		"I": '£', // Inky
-		"Y": '¥', // Clyde
-	},
-	"math": {
-		"B": '∀', // Blinky
-		"P": '√', // Pinky
-		"I": '∂', // Inky
-		"Y": '∫', // Clyde
-	},
-}

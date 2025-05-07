@@ -25,11 +25,11 @@ Bubble Tea supports basic animations and effects:
  - [x] Add animations for Pac-Man and ghost movement.
  - [x] Add sound effects (e.g., when collecting a dot or colliding with a ghost).
 
-### 6. Colors and Emojis
+### 6. Colors <s>and Emojis</s>
 Bubble Tea allows the use of colors for the text interface:
  - [x] Add colors for Pac-Man, ghosts, dots, and walls.
     For example, Pac-Man can be yellow, ghosts can have different colors, and dots can be white.
- - [ ] Add different sets of symbols and emojis.
+ - [x] Add different sets of symbols<s> and emojis</s>.
 
 ### 7. Menu and Settings
 Add a menu before starting the game:
@@ -39,6 +39,6 @@ Add a menu before starting the game:
 
 ### 8. Mods
 Adjust existing levels and add new game levels:
- - [ ] Ability to modify existing levels.
- - [ ] Add custom game levels.
- - [ ] Add custom symbols for Pac-Man, ghosts, dots, and power pellets.
+ - [x] Ability to modify existing levels.
+ - [x] Add custom game levels.
+ - [x] Add custom symbols for Pac-Man, ghosts<s>, dots, and power pellets</s>.

@@ -2,9 +2,9 @@
 
 PacManTea is a terminal-based game inspired by the classic Pac-Man, with customizable themes and styles, including Greek, Hebrew, and modern emoji-based designs.
 
-## Features (TODO)
+## Features
 
-- **Customizable Ghost Styles**: Choose from Latin, Greek, Hebrew, Emoji, and more.
+- **Customizable Ghost Styles**: Choose from Latin, Greek, Hebrew, and more.
 - **Dynamic Maze Rendering**: Supports decorative patterns and custom layouts.
 - **Difficulty Levels**: Easy, Medium, and Hard modes with adjustable ghost speeds and timers.
 - **Themed Mazes**: Includes Greek-inspired ornamental mazes and other creative designs.
@@ -13,7 +13,7 @@ PacManTea is a terminal-based game inspired by the classic Pac-Man, with customi
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/pacmantea.git
+   git clone https://github.com/vinser/pacmantea.git
    cd pacmantea
    ```
 
@@ -24,16 +24,18 @@ PacManTea is a terminal-based game inspired by the classic Pac-Man, with customi
 
 3. Run the game:
    ```bash
-   go run cmd/1/main.go
+   go run .
    ```
 
 ## Configuration
 
-You can customize the game by editing the `config.yml` file: 
-- Add new levels with unique maze layouts.
+You can customize the game by editing the `config.yml` file:
+- Change ppacman ang ghost styles (badges) 
 - Adjust difficulty settings like ghost speed and revival timers.
+- Add new levels with unique maze layouts.
+To create default `config.yml` in config folder run app with `-config` flag.
 
-For examples, see the [example configuration](https://github.com/vinser/pacmantea/blob/main/config-example.yml).
+For examples, see the [example configuration](https://github.com/vinser/pacmantea/blob/master/config-example.yml).
 
 ## Credits
 
