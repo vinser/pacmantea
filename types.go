@@ -86,4 +86,5 @@ type model struct {
 	winGame      bool
 	lives        int
 	sounds       map[string]sound
+	mute         bool
 }

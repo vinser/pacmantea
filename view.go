@@ -77,7 +77,7 @@ func (m model) View() string {
 	// Build the string for display
 	view := strings.Join(grid, "\n")
 	view += fmt.Sprintf("\nLevel: %d/%d, Score: %d/%d, Lives: %d", m.currentLevel+1, len(m.Levels), m.score, m.maxScore, m.lives)
-	view += "\nUse arrow keys to move. Press 'q' to quit."
+	view += "\nUse arrow keys to move. Press 'q' to quit, 'm' to mute"
 
 	return view
 }

@@ -20,6 +20,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return newModel, newModel.Init()
 				case "q", "ctrl+c":
 					return m, tea.Quit
+				case "m":
+					m.mute = !m.mute
 				}
 			}
 			return m, nil
@@ -34,6 +36,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return newModel, newModel.Init()
 			case "q", "ctrl+c":
 				return m, tea.Quit
+			case "m":
+				m.mute = !m.mute
 			}
 		}
 		return m, nil
@@ -50,6 +54,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return newModel, newModel.Init()
 			case "q", "ctrl+c":
 				return m, tea.Quit
+			case "m":
+				m.mute = !m.mute
 			}
 		}
 		// Stop scheduling commands when the game is won
@@ -77,6 +83,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			case "q", "ctrl+c":
 				return m, tea.Quit
+			case "m":
+				m.mute = !m.mute
 			}
 		}
 		return m, nil
@@ -87,6 +95,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
+		case "m":
+			m.mute = !m.mute
 		case "up":
 			if m.canMove(m.pacman.position.x, m.pacman.position.y-1) {
 				m.pacman.position.y--

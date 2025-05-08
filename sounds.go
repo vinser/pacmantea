@@ -96,7 +96,7 @@ func loadSoundSamples() (map[string]sound, error) {
 }
 
 func (m *model) playSound(name string) {
-	if sound, ok := m.sounds[name]; ok {
+	if sound, ok := m.sounds[name]; ok && !m.mute {
 		// Reset the stream to the beginning
 		err := sound.Stream.Seek(0)
 		if err != nil {

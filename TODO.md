@@ -24,6 +24,7 @@ Add more game statistics:
 Bubble Tea supports basic animations and effects:
  - [x] Add animations for Pac-Man and ghost movement.
  - [x] Add sound effects (e.g., when collecting a dot or colliding with a ghost).
+ - [x] Add mute option
 
 ### 6. Colors <s>and Emojis</s>
 Bubble Tea allows the use of colors for the text interface:
