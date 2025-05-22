@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"time"
 
 	"github.com/charmbracelet/lipgloss"
 	"gopkg.in/yaml.v3"
@@ -15,17 +16,12 @@ import (
 //go:embed config.yml
 var CONFIG_DATA []byte
 
-var configPath string = path.Join("config", "config.yml")
-
-// Simulate ghosts love
-var ghostsLove bool = false
-
 func writeDefaultConfig() error {
 	// Write the embedded CONFIG_DATA to a file
 	if err := os.MkdirAll("config", os.ModePerm); err != nil {
 		return err
 	}
-	file, err := os.Create(configPath)
+	file, err := os.Create(path.Join("config", "config.yml"))
 	if err != nil {
 		return err
 	}
@@ -36,8 +32,14 @@ func writeDefaultConfig() error {
 }
 
 func newModel() model {
-	var config Config
+	state := loadState()
+	config := loadConfig()
+	// Initialize the game model with the loaded configuration and saved game
+	return initialModel(config, state)
+}
 
+func loadConfig() Config {
+	var config Config
 	// Determine the config path based on the environment variable
 	configPath := os.Getenv("PACMANTEA_CONFIG_PATH")
 	if configPath == "" {
@@ -60,9 +62,7 @@ func newModel() model {
 	if err = yaml.Unmarshal(data, &config); err != nil {
 		log.Fatalf("Failed to parse %s: %v", configPath, err)
 	}
-
-	// Initialize the game model with the loaded configuration
-	return initialModel(config, 0)
+	return config
 }
 
 func initPacmanAt(pos point) pacman {
@@ -112,7 +112,17 @@ func initGhostAt(pos point, style lipgloss.Style, name string, badge rune) ghost
 }
 
 // Update the initialModel function
-func initialModel(config Config, currntLevel int) model {
+func initialModel(config Config, state State) model {
+	currntLevel := 0
+	for i, level := range config.Levels {
+		if level.Name == state.LevelName {
+			currntLevel = i
+			break
+		}
+	}
+	if state.LevelName == "" {
+		state.LevelName = config.Levels[currntLevel].Name
+	}
 	maze := make([]string, len(config.Levels[currntLevel].Maze))
 	copy(maze, config.Levels[currntLevel].Maze)
 	// Ensure the maze has a minimum size of 5x5
@@ -200,14 +210,15 @@ func initialModel(config Config, currntLevel int) model {
 		ctx:          ctx,
 		cancel:       cancel,
 		Config:       config,
+		State:        state,
 		currentLevel: currntLevel,
+		currentSart:  time.Now(),
 		maze:         maze,
-		maxScore:     len(dots),
 		pacman:       pacmanEntity,
 		dots:         dots,
 		energizers:   energizers,
 		ghosts:       ghosts,
-		score:        0,
+		levelScore:   0,
 		gameOver:     false,
 		win:          false,
 		lives:        5, // Initialize with 5 lives

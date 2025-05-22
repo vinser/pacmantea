@@ -13,16 +13,19 @@ func (m model) View() string {
 		if m.winGame {
 			return "You Win! \nPress space to restart. Press 'q' to quit."
 		} else {
-			return fmt.Sprintf("Level %d completed! \nPress space to continue. Press 'q' to quit.", m.currentLevel+1)
+			view := fmt.Sprintf("Level %d completed! \nPress space to continue. Press 'q' to quit.", m.currentLevel+1)
+			view += fmt.Sprintf("\nLevel elapsed time: %d seconds!", m.ElapsedTime[m.LevelName])
+			view += fmt.Sprintf("\n%v", m.ElapsedTime)
+			return view
 		}
 	}
+
 	if m.gameOver {
 		if m.lives > 1 {
 			return fmt.Sprintf("You lost a life! Lives remaining: %d.\nPress space to restart the current level. Press 'q' to quit.", m.lives-1)
 		}
 		return "Game Over! \nPress space to restart from the beginning. Press 'q' to quit."
 	}
-
 	grid := make([]string, len(m.maze))
 	copy(grid, m.maze)
 
@@ -76,7 +79,7 @@ func (m model) View() string {
 
 	// Build the string for display
 	view := strings.Join(grid, "\n")
-	view += fmt.Sprintf("\nLevel: %d/%d, Score: %d/%d, Lives: %d", m.currentLevel+1, len(m.Levels), m.score, m.maxScore, m.lives)
+	view += fmt.Sprintf("\nLevel: %d/%d, Score: %d/%d, Lives: %d", m.currentLevel+1, len(m.Levels), m.levelScore, len(m.dots), m.lives)
 	view += "\nUse arrow keys to move. Press 'q' to quit, 'm' to mute"
 
 	return view

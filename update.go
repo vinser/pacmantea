@@ -1,9 +1,17 @@
 package main
 
 import (
+	"time"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/faiface/beep/speaker"
 )
+
+const (
+	ghostBonus = 40 // 40 points for first eated ghost in rampant state, 80 for second...
+)
+
+var ghostsEaten int = 0
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if m.gameOver {
@@ -14,14 +22,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				switch msg.String() {
 				case " ":
 					lives := m.lives - 1
-					m.cancel()                                         // Deduct a life
-					newModel := initialModel(m.Config, m.currentLevel) // Restart current level
-					newModel.lives = lives                             // Preserve remaining lives
+					m.cancel()                                  // Deduct a life
+					newModel := initialModel(m.Config, m.State) // Restart current level
+					newModel.lives = lives                      // Preserve remaining lives
 					return newModel, newModel.Init()
 				case "q", "ctrl+c":
+					m.LevelName = m.Levels[m.currentLevel].Name
 					return m, tea.Quit
 				case "m":
-					m.mute = !m.mute
+					m.Mute = !m.Mute
 				}
 			}
 			return m, nil
@@ -32,36 +41,40 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg.String() {
 			case " ":
 				m.cancel()
-				newModel := initialModel(m.Config, 0)
+				m.LevelName = m.Levels[0].Name
+				newModel := initialModel(m.Config, m.State)
 				return newModel, newModel.Init()
 			case "q", "ctrl+c":
 				return m, tea.Quit
 			case "m":
-				m.mute = !m.mute
+				m.Mute = !m.Mute
 			}
 		}
 		return m, nil
 	}
 	if m.winGame {
+		saveState(m.State)
+		m.LevelName = ""
 		switch msg := msg.(type) {
 		case tea.KeyMsg:
 			switch msg.String() {
 			case " ":
 				m.cancel()
-				newModel := initialModel(m.Config, 0)
+				newModel := initialModel(m.Config, m.State)
 				newModel.winGame = false // Reset the winGame flag
 				// Start the timer for ghost movement and blinking
 				return newModel, newModel.Init()
 			case "q", "ctrl+c":
 				return m, tea.Quit
 			case "m":
-				m.mute = !m.mute
+				m.Mute = !m.Mute
 			}
 		}
 		// Stop scheduling commands when the game is won
 		return m, nil
 	}
 	if m.win {
+		m.recordLevelElapsedTime()
 		if m.currentLevel >= len(m.Levels)-1 {
 			m.winGame = true
 			return m, nil
@@ -73,22 +86,32 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.win {
 					if m.currentLevel < len(m.Levels)-1 {
 						m.currentLevel++
+						m.LevelName = m.Levels[m.currentLevel].Name
 					}
 					lives := m.lives
 					m.cancel()
-					newModel := initialModel(m.Config, m.currentLevel)
+					newModel := initialModel(m.Config, m.State)
 					newModel.lives = lives
 					// Start the timer for ghost movement and blinking
 					return newModel, newModel.Init()
 				}
 			case "q", "ctrl+c":
+				if m.currentLevel < len(m.Levels)-1 {
+					m.currentLevel++
+					m.LevelName = m.Levels[m.currentLevel].Name
+				}
+				saveState(m.State)
 				return m, tea.Quit
 			case "m":
-				m.mute = !m.mute
+				m.Mute = !m.Mute
 			}
 		}
 		return m, nil
 	}
+	// if m.currentSart.IsZero() {
+	// 	m.currentSart = time.Now() // Set current level start time
+	// 	return m, nil
+	// }
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		speaker.Clear()
@@ -96,7 +119,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		case "m":
-			m.mute = !m.mute
+			m.Mute = !m.Mute
 		case "up":
 			if m.canMove(m.pacman.position.x, m.pacman.position.y-1) {
 				m.pacman.position.y--
@@ -124,7 +147,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Check for dot collection
 		for i := len(m.dots) - 1; i >= 0; i-- {
 			if m.pacman.position == m.dots[i].position {
-				m.score++
+				m.levelScore++
 				m.maze[m.pacman.position.y] = replaceAtIndex(m.maze[m.pacman.position.y], ' ', m.pacman.position.x) // Replace dot with a space
 				m.dots = append(m.dots[:i], m.dots[i+1:]...)
 				go m.playSound(SOUND_CHOMP)
@@ -135,6 +158,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Check for win condition
 		if len(m.dots) == 0 {
 			m.win = true
+			m.gameScore += m.levelScore
 			go m.playSound(SOUND_INTERMISSION)
 			return m, nil
 		}
@@ -142,12 +166,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Check for energizer collection
 		for i := len(m.energizers) - 1; i >= 0; i-- {
 			if m.pacman.position == m.energizers[i].position {
-				m.score++
 				m.maze[m.pacman.position.y] = replaceAtIndex(m.maze[m.pacman.position.y], ' ', m.pacman.position.x) // Replace dot with a space
 				m.energizers = append(m.energizers[:i], m.energizers[i+1:]...)
 
 				// Activate rampant mode
 				m.pacman.rampantState = true
+				ghostsEaten = 0
 				go m.playSound(SOUND_EATFRUIT)
 				return m, m.startRampantTimer()
 			}
@@ -206,4 +230,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
+}
+
+func (m *model) recordLevelElapsedTime() {
+	elapsedTime := int(time.Since(m.currentSart).Seconds())
+	if m.State.ElapsedTime[m.LevelName] == 0 || elapsedTime < m.State.ElapsedTime[m.LevelName] {
+		m.State.ElapsedTime[m.LevelName] = elapsedTime
+	}
+}
+func (m *model) recordGameScore() {
+	if m.State.HighScore < m.levelScore {
+		m.State.HighScore = m.levelScore
+	}
 }

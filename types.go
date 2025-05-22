@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"time"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -25,6 +26,7 @@ type Difficulty struct {
 	RampantDuration  int `yaml:"rampant_duration"`
 	CooldownDuration int `yaml:"cooldown_duration"`
 	RevivalTimer     int `yaml:"revival_timer"`
+	SpeedBonus       int `yaml:"speed_bonus"` // base points for each second in formula speedBonus * wonGames * seconds
 }
 
 type Badges struct {
@@ -73,18 +75,19 @@ type model struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 	Config
+	State
 	currentLevel int
+	currentSart  time.Time
 	maze         []string
-	maxScore     int
 	pacman       pacman
 	dots         []dot
 	energizers   []energizer
 	ghosts       map[string]ghost
-	score        int
+	levelScore   int
+	gameScore    int
 	gameOver     bool
 	win          bool
 	winGame      bool
 	lives        int
 	sounds       map[string]sound
-	mute         bool
 }

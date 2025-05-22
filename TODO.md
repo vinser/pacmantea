@@ -28,8 +28,7 @@ Bubble Tea supports basic animations and effects:
 
 ### 6. Colors <s>and Emojis</s>
 Bubble Tea allows the use of colors for the text interface:
- - [x] Add colors for Pac-Man, ghosts, dots, and walls.
-    For example, Pac-Man can be yellow, ghosts can have different colors, and dots can be white.
+ - [x] Add colors for Pac-Man, ghosts, dots, and walls. For example, Pac-Man can be yellow, ghosts can have different colors, and dots can be white.
  - [x] Add different sets of symbols<s> and emojis</s>.
 
 ### 7. Menu and Settings

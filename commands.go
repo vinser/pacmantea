@@ -6,14 +6,27 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-const pacmanBlinkTickDuration = time.Second / 2
+const (
+	pacmanBlinkTickDuration = time.Second / 2
+)
 
 func (m model) Init() tea.Cmd {
 	cmds := []tea.Cmd{
 		m.pacmanBlinkTick(), // Start the timer for Pac-Man blinking
 		m.ghostMoveTick(),   // Start the timer for ghost movement
+		splashScreen(),
 	}
 	return tea.Batch(cmds...)
+}
+
+// Message type for starting the game
+type startGameMsg struct{}
+
+// Command to start the game
+func splashScreen() tea.Cmd {
+	return tea.Tick(time.Second*2, func(_ time.Time) tea.Msg {
+		return startGameMsg{}
+	})
 }
 
 // Message type for blinking
@@ -110,6 +123,8 @@ func (m *model) checkGhostCollisions() tea.Cmd {
 			if m.pacman.position == g.position {
 				if m.pacman.rampantState || m.pacman.cooldownState {
 					g.dead = true
+					ghostsEaten++
+					m.levelScore += ghostBonus * ghostsEaten
 					go m.playSound(SOUND_EATGHOST)
 					m.ghosts[name] = g
 					m.maze[g.position.y] = replaceAtIndex(m.maze[g.position.y], ' ', g.position.x) // Remove ghost from maze

@@ -51,16 +51,19 @@ difficulties: # Difficulty settings for the game
     rampant_duration:  5 # Duration of Pac-Man's rampant state
     cooldown_duration: 2 # Cooldown duration after rampant state
     revival_timer:     5 # Time for ghosts to revive
+    speed_bonus:       1 # Speed bonus multiplier
   Medium: # Medium difficulty level
     ghost_speed:       2
     rampant_duration:  3
     cooldown_duration: 2
     revival_timer:     3
+    speed_bonus:       2
   Hard: # Hard difficulty level
     ghost_speed:       3
     rampant_duration:  2
     cooldown_duration: 2
     revival_timer:     2
+    speed_bonus:       3
 
 levels: # Levels configuration
   - name: Level 1 # Level 1 configuration
