@@ -1,4 +1,4 @@
-package main
+package state
 
 import (
 	"crypto/aes"
@@ -79,7 +79,7 @@ func decrypt(ciphertext []byte) ([]byte, error) {
 // 💾 Save/Load Functions
 // ========================
 
-func saveState(s State) error {
+func Save(s State) error {
 	// Get save file path
 	filename, err := getSavePath()
 	if err != nil {
@@ -107,7 +107,7 @@ func saveState(s State) error {
 	return os.WriteFile(filename, encrypted, 0644)
 }
 
-func loadState() State {
+func Load() State {
 	var state State
 	state.ElapsedTime = make(map[string]int)
 	// Get save file path

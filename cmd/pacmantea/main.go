@@ -6,6 +6,9 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/vinser/pacmantea/internal/config"
+	"github.com/vinser/pacmantea/internal/model"
+	"github.com/vinser/pacmantea/internal/sound"
 )
 
 func main() {
@@ -15,7 +18,7 @@ func main() {
 
 	// If -config flag is set, write the default config.yml and exit
 	if *configFlag {
-		err := writeDefaultConfig()
+		err := config.WriteDefaultConfig()
 		if err != nil {
 			log.Fatalf("Failed to write default config.yml: %v", err)
 		}
@@ -24,8 +27,8 @@ func main() {
 	}
 
 	// Run the game
-	model := newModel()
-	model.playSound(SOUND_BEGINNING)
+	model := model.New()
+	model.PlaySound(sound.BEGINNING)
 
 	p := tea.NewProgram(model)
 	if _, err := p.Run(); err != nil {
